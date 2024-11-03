@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use crate::engine::player_input::PlayerInputs;
+use crate::engine::player_input::Direction;
 use crate::engine::player::Player;
 use crate::engine::sprite_animation::*;
 
@@ -34,7 +35,12 @@ pub fn player_movement_state(
 ) {
     for ev in player_move_event_reader.read() {
         match ev {
-            PlayerInputs::Move(vel) => {
+            PlayerInputs::Walk(direction) => {
+                // Extract the Vec2 movement velocity based on the direction
+                let vel = match direction {
+                    Direction::Left(movement) | Direction::Right(movement) => movement,
+                };
+
                 for (mut state, mut input) in q_player.iter_mut() {
                     input.movement_velocity = *vel;
                     if *state != PlayerState::Attacking {
